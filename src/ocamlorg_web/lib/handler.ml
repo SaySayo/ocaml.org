@@ -396,9 +396,10 @@ let package_docs t req =
   match version_opt with
   | None -> not_found req
   | Some version ->
-     let is_latest_version = Ocamlorg_package.is_latest_version t name version in 
-     let version = Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_doc package version ~is_latest_version in
+        let version_string = if Ocamlorg_package.is_latest_version t name version then 
+         "latest" else
+          Ocamlorg_package.Version.to_string version in
+      let target = Ocamlorg_frontend.Url.package_doc package version_string in
       Dream.redirect req target
 
 let package_versioned t kind req =
@@ -414,9 +415,10 @@ let package_versioned t kind req =
   match package with
   | None -> not_found req
   | Some package ->
+    Dream.log "Does it give 404";
       let open Lwt.Syntax in
-      let version = Ocamlorg_package.version package in
-      let is_latest_version = Ocamlorg_package.is_latest_version t name version in
+      let _version = Ocamlorg_package.version package in
+      (* let is_latest_version = Ocamlorg_package.is_latest_version t name version in *)
       let kind =
         match kind with
         | Package -> `Package
@@ -459,14 +461,14 @@ let package_versioned t kind req =
       Dream.html
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
            ~readme_title ~dependencies ~rev_dependencies ~homepages ~source
-           ~changes_filename ~license_filename ~is_latest_version package_meta)
+           ~changes_filename ~license_filename package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
   let version =
     Ocamlorg_package.Version.of_string @@ Dream.param req "version"
   in
-  let is_latest_version = Ocamlorg_package.is_latest_version t name version in
+  (* let is_latest_version = Ocamlorg_package.is_latest_version t name version in *)
   let package = Ocamlorg_package.get_package t name version in
   match package with
   | None -> not_found req
@@ -481,8 +483,8 @@ let package_doc t kind req =
       let root =
         let make =
           match kind with
-          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:"" ~is_latest_version
-          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:"" ~is_latest_version
+          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
+          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:""
         in
         make
           (Ocamlorg_package.Name.to_string name)
@@ -619,5 +621,5 @@ let package_doc t kind req =
           in
           let package_meta = package_meta t package in
           Dream.html
-            (Ocamlorg_frontend.package_documentation ~path ~title ~toc ~maptoc ~is_latest_version
+            (Ocamlorg_frontend.package_documentation ~path ~title ~toc ~maptoc
                ~content:doc.content package_meta))
