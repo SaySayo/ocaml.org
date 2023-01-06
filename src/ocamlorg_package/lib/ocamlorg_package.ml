@@ -386,6 +386,11 @@ let latest_documented_version t name =
   | None -> Lwt.return None
   | Some vlist -> aux (List.rev vlist)
 
+let is_latest_version t name version =
+  match get_package_versions t name with
+  | None -> false
+  | Some vlist -> List.hd vlist == version
+
 module Search : sig
   type search_request
   type score

@@ -65,15 +65,16 @@ let package_route t =
       Dream.get (Url.package ~hash:":hash" ":name") (Handler.package t);
       Dream.get
         (Url.package_with_version ":name" ":version")
-        ((Handler.package_versioned t) Handler.Package);
+        (Dream.log "Does it give a 404"; (Handler.package_versioned t) Handler.Package);
       Dream.get
         (Url.package_with_version ~hash:":hash" ":name" ":version")
-        ((Handler.package_versioned t) Handler.Universe);
+        (Dream.log "Does it give a 404"; (Handler.package_versioned t) Handler.Universe);
       Dream.get
-        (Url.package_doc ":name" ":version" ~page:"**")
+        (Url.package_doc ":name" ":version" ~page:"**" ~is_latest_version:false)
         ((Handler.package_doc t) Handler.Package);
       Dream.get
-        (Url.package_doc ~hash:":hash" ~page:"**" ":name" ":version")
+        (Url.package_doc ~hash:":hash" ~page:"**" ":name" ":version"
+           ~is_latest_version:false)
         ((Handler.package_doc t) Handler.Universe);
     ]
 
