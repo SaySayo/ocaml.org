@@ -415,10 +415,8 @@ let package_versioned t kind req =
   match package with
   | None -> not_found req
   | Some package ->
-    Dream.log "Does it give 404";
       let open Lwt.Syntax in
       let _version = Ocamlorg_package.version package in
-      (* let is_latest_version = Ocamlorg_package.is_latest_version t name version in *)
       let kind =
         match kind with
         | Package -> `Package
@@ -465,15 +463,18 @@ let package_versioned t kind req =
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
-  let version =
-    Ocamlorg_package.Version.of_string @@ Dream.param req "version"
+  let version_from_url = Dream.param req "version"
   in
-  (* let is_latest_version = Ocamlorg_package.is_latest_version t name version in *)
-  let package = Ocamlorg_package.get_package t name version in
+  let package = if version_from_url = "latest" then 
+    Ocamlorg_package.get_package_latest t name
+  else 
+    let version = Ocamlorg_package.Version.of_string @@ version_from_url in
+     Ocamlorg_package.get_package t name version in
   match package with
   | None -> not_found req
   | Some package -> (
       let open Lwt.Syntax in
+      let version = Ocamlorg_package.version package in
       let kind =
         match kind with
         | Package -> `Package

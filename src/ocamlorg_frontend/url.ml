@@ -8,7 +8,6 @@ let package_docs v = "/p/" ^ v ^ "/doc"
 let package_with_version ?hash v version =
   with_hash hash ^ "/" ^ v ^ "/" ^ version
 
-(* with_hash hash ^ "/" ^ v ^ "/" ^ "latest/" ^ version ^ "/doc/" ^ page *)
 let package_doc ?hash ?(page = "index.html") v version =
   with_hash hash ^ "/" ^ v ^ "/" ^ version ^ "/doc/" ^ page
 
