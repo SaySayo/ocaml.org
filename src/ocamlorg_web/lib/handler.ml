@@ -399,7 +399,7 @@ let package_docs t req =
         let version_string = if Ocamlorg_package.is_latest_version t name version then 
          "latest" else
           Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_doc package version_string in
+      let target = Ocamlorg_frontend.Url.package_doc package version_string ~is_latest_url:false in
       Dream.redirect req target
 
 let package_versioned t kind req =
@@ -417,6 +417,8 @@ let package_versioned t kind req =
   | Some package ->
       let open Lwt.Syntax in
       let _version = Ocamlorg_package.version package in
+      let is_latest_url = if version_from_url = "latest" then 
+        true else false in
       let kind =
         match kind with
         | Package -> `Package
@@ -459,7 +461,7 @@ let package_versioned t kind req =
       Dream.html
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
            ~readme_title ~dependencies ~rev_dependencies ~homepages ~source
-           ~changes_filename ~license_filename package_meta)
+           ~changes_filename ~license_filename ~is_latest_url package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
@@ -470,10 +472,15 @@ let package_doc t kind req =
   else 
     let version = Ocamlorg_package.Version.of_string @@ version_from_url in
      Ocamlorg_package.get_package t name version in
+  (* let is_latest_url = if version_from_url = "latest" then 
+      in *)
   match package with
   | None -> not_found req
   | Some package -> (
       let open Lwt.Syntax in
+      let is_latest_url = if version_from_url = "latest" then 
+          true else false 
+    in
       let version = Ocamlorg_package.version package in
       let kind =
         match kind with
@@ -484,8 +491,8 @@ let package_doc t kind req =
       let root =
         let make =
           match kind with
-          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
-          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:""
+          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:"" ~is_latest_url
+          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:"" ~is_latest_url
         in
         make
           (Ocamlorg_package.Name.to_string name)
@@ -623,4 +630,4 @@ let package_doc t kind req =
           let package_meta = package_meta t package in
           Dream.html
             (Ocamlorg_frontend.package_documentation ~path ~title ~toc ~maptoc
-               ~content:doc.content package_meta))
+               ~is_latest_url ~content:doc.content package_meta))
