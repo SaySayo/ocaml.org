@@ -60,9 +60,9 @@ let package_route t =
     [
       Dream.get Url.packages (Handler.packages t);
       Dream.get Url.packages_search (Handler.packages_search t);
-      Dream.get (Url.package ":name") (Handler.package t);
+      Dream.get (Url.package ":name" ~is_latest_url:false) (Handler.package t);
       Dream.get (Url.package_docs ":name") (Handler.package_docs t);
-      Dream.get (Url.package ~hash:":hash" ":name") (Handler.package t);
+      Dream.get (Url.package ~hash:":hash" ":name" ~is_latest_url:false) (Handler.package t);
       Dream.get
         (Url.package_with_version ":name" ":version")
         ((Handler.package_versioned t) Handler.Package);

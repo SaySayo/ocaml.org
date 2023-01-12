@@ -381,9 +381,12 @@ let package t req =
   let version = find_default_version name in
   match version with
   | Some version ->
-      let version = Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_with_version package version in
-      Dream.redirect req target
+    let version_string = if Ocamlorg_package.is_latest_version t name version then 
+      "latest" else
+       Ocamlorg_package.Version.to_string version in
+      (* let version = Ocamlorg_package.Version.to_string version in *)
+    let target = Ocamlorg_frontend.Url.package_with_version package version_string in
+    Dream.redirect req target
   | None -> not_found req
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
