@@ -2,9 +2,8 @@ let index = "/"
 let packages = "/packages"
 let packages_search = "/packages/search"
 let with_hash = Option.fold ~none:"/p" ~some:(( ^ ) "/u/")
-let package ?hash ~is_latest_url v  = 
-  if is_latest_url then with_hash hash ^ "/" ^ v ^ "/latest"
-  else with_hash hash ^ "/" ^ v
+let package ?hash v  = 
+   with_hash hash ^ "/" ^ v
 let package_docs v = "/p/" ^ v ^ "/doc"
 
 let package_with_version ?hash v version =
