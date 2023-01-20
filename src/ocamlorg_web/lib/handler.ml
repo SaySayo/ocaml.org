@@ -463,8 +463,6 @@ let package_doc t kind req =
   else 
     let version = Ocamlorg_package.Version.of_string @@ version_from_url in
      Ocamlorg_package.get_package t name version in
-  (* let is_latest_url = if version_from_url = "latest" then 
-      in *)
   match package with
   | None -> not_found req
   | Some package -> (

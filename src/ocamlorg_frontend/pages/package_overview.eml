@@ -12,6 +12,7 @@ let render
 (package : Package_intf.package) 
 =
 Package_layout.render
+~is_latest_url
 ~title:(Printf.sprintf "%s %s · OCaml Package" package.name package.version)
 ~description:(Printf.sprintf "%s %s: %s" package.name package.version package.description)
 ~canonical:(Url.package_with_version package.name package.version)

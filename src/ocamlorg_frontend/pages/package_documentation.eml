@@ -46,6 +46,7 @@ let path_page = match str_path |> String.concat "/" with
                 | "" -> None
                 | path -> Some (path ^ if String.contains path '.' then "" else "/index.html") in
 Package_layout.render
+~is_latest_url
 ~title
 ~description:(Printf.sprintf "%s %s: %s" package.name package.version package.description)
 ~package

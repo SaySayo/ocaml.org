@@ -9,6 +9,7 @@ let render
 ~canonical
 ~(package : Package_intf.package)
 ~tab
+~is_latest_url
 inner =
 Layout.render
 ?styles
@@ -31,8 +32,11 @@ Layout.render
               <%s package.name %>
             </a>
             <select id="version" name="version" onchange="location = this.value;" class="appearance-none cursor-pointer py-0 pt-1 border rounded-md border-transparent pr-8">
+              <option value="/p/<%s package.name %>/<%s "latest" %>"<%s if is_latest_url then "selected" else package.version  %>>
+              <%s "latest" %>
+              </option>
               <% package.versions |> List.iter begin fun item -> %>
-              <option value="/p/<%s package.name %>/<%s item %>"<%s if item = package.version then "selected" else "" %>>
+              <option value="/p/<%s package.name %>/<%s item %>"<%s if item = package.version then "selected" else "latest" %>>
                 <%s item %>
               </option>
               <% end; %>
