@@ -373,7 +373,7 @@ let packages_search t req =
 
 let package _t req =
   let package = Dream.param req "name" in
-  let target = Ocamlorg_frontend.Url.package_with_version package "latest" in
+  let target = Ocamlorg_frontend.Url.package package in
     Dream.redirect req target
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
