@@ -373,8 +373,7 @@ let packages_search t req =
 
 let package _t req =
   let package = Dream.param req "name" in
-  let version_string = "latest" in
-  let target = Ocamlorg_frontend.Url.package_with_version package version_string in
+  let target = Ocamlorg_frontend.Url.package_with_version package "latest" in
     Dream.redirect req target
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
@@ -407,9 +406,7 @@ let package_versioned t kind req =
   | None -> not_found req
   | Some package ->
       let open Lwt.Syntax in
-      let _version = Ocamlorg_package.version package in
-      let is_latest_url = if version_from_url = "latest" then 
-        true else false in
+      let is_latest_url = version_from_url = "latest" in
       let kind =
         match kind with
         | Package -> `Package
@@ -467,9 +464,7 @@ let package_doc t kind req =
   | None -> not_found req
   | Some package -> (
       let open Lwt.Syntax in
-      let is_latest_url = if version_from_url = "latest" then 
-          true else false 
-    in
+      let is_latest_url = version_from_url = "latest" in
       let version = Ocamlorg_package.version package in
       let kind =
         match kind with
