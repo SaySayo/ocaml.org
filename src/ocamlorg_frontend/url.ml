@@ -2,17 +2,16 @@ let index = "/"
 let packages = "/packages"
 let packages_search = "/packages/search"
 let with_hash = Option.fold ~none:"/p" ~some:(( ^ ) "/u/")
-let package ?hash v  = 
-   with_hash hash ^ "/" ^ v
+let package ?hash v = with_hash hash ^ "/" ^ v
 let package_docs v = "/p/" ^ v ^ "/doc"
 
 let package_with_version ?hash v version =
   with_hash hash ^ "/" ^ v ^ "/" ^ version
 
-let package_doc ?hash ?(page = "index.html") ?(is_latest_url = false) v version  =
-  if is_latest_url then
-    with_hash hash ^ "/" ^ v ^ "/latest/doc/" ^ page else
-    with_hash hash ^ "/" ^ v ^ "/" ^ version ^ "/doc/" ^ page
+let package_doc ?hash ?(page = "index.html") ?(is_latest_url = false) v version
+    =
+  if is_latest_url then with_hash hash ^ "/" ^ v ^ "/latest/doc/" ^ page
+  else with_hash hash ^ "/" ^ v ^ "/" ^ version ^ "/doc/" ^ page
 
 let community = "/community"
 let success_story v = "/success-stories/" ^ v

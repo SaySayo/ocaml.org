@@ -368,7 +368,7 @@ let packages_search t req =
 let package _t req =
   let package = Dream.param req "name" in
   let target = Ocamlorg_frontend.Url.package package in
-    Dream.redirect req target
+  Dream.redirect req target
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
     PACKAGE. *)
@@ -380,23 +380,27 @@ let package_docs t req =
   match version_opt with
   | None -> not_found req
   | Some version ->
-        let version_string = if Ocamlorg_package.is_latest_version t name version then 
-         "latest" else
-          Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_doc package version_string ~is_latest_url:false in
+      let version_string =
+        if Ocamlorg_package.is_latest_version t name version then "latest"
+        else Ocamlorg_package.Version.to_string version
+      in
+      let target =
+        Ocamlorg_frontend.Url.package_doc package version_string
+          ~is_latest_url:false
+      in
       Dream.redirect req target
 
 let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
 
 let package_versioned t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
-  let version_from_url = Dream.param req "version"
-  in
-  let package = if version_from_url = "latest" then 
-    Ocamlorg_package.get_package_latest t name
-  else 
-    let version = Ocamlorg_package.Version.of_string @@ version_from_url in
-     Ocamlorg_package.get_package t name version
+  let version_from_url = Dream.param req "version" in
+  let package =
+    if version_from_url = "latest" then
+      Ocamlorg_package.get_package_latest t name
+    else
+      let version = Ocamlorg_package.Version.of_string @@ version_from_url in
+      Ocamlorg_package.get_package t name version
   in
   match package with
   | None -> not_found req
@@ -450,18 +454,17 @@ let package_versioned t kind req =
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
            ~readme_title ~dependencies ~rev_dependencies ~homepages ~source
            ~changes_filename ~license_filename ~is_latest_url package_meta)
-           ~readme_title ~dependencies ~rev_dependencies ~conflicts ~homepages
-           ~source ~changes_filename ~license_filename package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
-  let version_from_url = Dream.param req "version"
+  let version_from_url = Dream.param req "version" in
+  let package =
+    if version_from_url = "latest" then
+      Ocamlorg_package.get_package_latest t name
+    else
+      let version = Ocamlorg_package.Version.of_string @@ version_from_url in
+      Ocamlorg_package.get_package t name version
   in
-  let package = if version_from_url = "latest" then 
-    Ocamlorg_package.get_package_latest t name
-  else 
-    let version = Ocamlorg_package.Version.of_string @@ version_from_url in
-     Ocamlorg_package.get_package t name version in
   match package with
   | None -> not_found req
   | Some package -> (
@@ -477,8 +480,11 @@ let package_doc t kind req =
       let root =
         let make =
           match kind with
-          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:"" ~is_latest_url
-          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:"" ~is_latest_url
+          | `Package ->
+              Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
+                ~is_latest_url
+          | `Universe u ->
+              Ocamlorg_frontend.Url.package_doc ~hash:u ~page:"" ~is_latest_url
         in
         make
           (Ocamlorg_package.Name.to_string name)
