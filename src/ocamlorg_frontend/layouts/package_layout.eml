@@ -13,10 +13,12 @@ let render
 inner =
 Layout.render
 ?styles
+~show_get_started:false
 ~wide:true
 ~title
 ~description
-~canonical @@
+~canonical
+~active_top_nav_item:Header.Packages @@
 <div class="bg-white">
   <div class="py-5 lg:py-6">
     <div class="container-fluid wide">
@@ -37,9 +39,9 @@ Layout.render
               </option>
               <% package.versions |> List.iter begin fun item -> %>
               <option value="/p/<%s package.name %>/<%s item %>"<%s if not is_latest_url && item = package.version then "selected" else "" %>>
+              <option value="/p/<%s package.name %>/<%s item %>" <%s if item = package.version then "selected" else "" %>>
                 <%s item %>
-              </option>
-              
+              </option>  
               <% end; %>
             </select>
           </h4>

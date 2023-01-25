@@ -7,15 +7,28 @@ module.exports = {
     extend: {
       typography: {
         DEFAULT: {
-          css: {
+          css: [{
             'code::before': {
               content: '""',
             },
             'code::after': {
               content: '""',
             },
-          }
-        }
+          },{
+            h1: {
+              fontWeight: 700,
+            },
+            code: {
+              fontSize: "1em",
+            },
+            'h2 code': {
+              fontSize: "1em",
+            },
+            'h3 code': {
+              fontSize: "1em",
+            },
+          }]
+        },
       },
       maxWidth: {
         '8xl': '90rem',
@@ -36,6 +49,7 @@ module.exports = {
         },
         background: {
           default: "#FAF8F3",
+          "dark-blue": "#0e1531", // one of the colors from the blue patterned background used in various parts of the site
         },
         body: {
           700: "#0A0C11",

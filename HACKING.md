@@ -53,6 +53,32 @@ You can run the unit test suite with:
 make test
 ```
 
+### Building the Playground
+
+The OCaml playground is compiled separately from the rest of the server and the generated assets can be found in
+[`playground/asset/`](./playground/asset/).
+
+To regenerate the playground, you will need to set up an OCaml 5 switch:
+
+```
+opam switch create 5.0.0 5.0.0 --no-install
+```
+
+You can then go in the `playground/` directory and install the dependencies:
+
+```
+opam install . --deps-only
+```
+
+After the dependencies have been installed, simply build the project to re-generate the JavaScript assets:
+
+```
+dune build --root .
+```
+
+Once the compilation is complete and successuful, the newly generated assets have to be git committed
+in ocaml.org and merged as a pull request. 
+
 ### Deploying
 
 Commits added on `main` are automatically deployed on <https://ocaml.org/>.
@@ -82,6 +108,9 @@ The following snippet describes the repository structure.
 ├── data/
 |   Data used by ocaml.org in Yaml and Markdown format.
 │
+├── playground/
+|   The source and generated assets for the OCaml Playground
+|
 ├── src
 │   ├── dream_dashboard
 |   |   A monitoring and analytics dashboard for dream.
@@ -94,9 +123,6 @@ The following snippet describes the repository structure.
 |   |
 │   ├── ocamlorg_package
 |   |   The library for constructing opam-repository statistics and information (e.g. rev deps).
-|   |
-│   ├── ocamlorg_playground
-|   |   All of the js_of_ocaml code for the OCaml playground.
 |   |
 │   └── ocamlorg_web
 |       The main entry-point of the server.

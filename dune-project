@@ -54,17 +54,7 @@
    (>= 0.8.0))
   yojson
   lwt
-  brr
-  rpclib
-  rpclib-lwt
-  js_top_worker
-  js_top_worker-client
-  code-mirror
-  merlin-js
-  (js_of_ocaml
-   (>= 4.0))
   tailwindcss
-  esbuild
   hilite
   river
   syndic
@@ -88,7 +78,6 @@
   (timedesc
    (>= 0.8.0))
   ; tools/ood-gen
-  piaf
   ppx_deriving_yaml
   ezjsonm
   lambdasoup

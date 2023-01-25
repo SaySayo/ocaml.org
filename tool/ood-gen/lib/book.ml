@@ -1,4 +1,4 @@
-type link = { description : string; uri : string } [@@deriving yaml]
+type link = { description : string; uri : string } [@@deriving of_yaml]
 
 type metadata = {
   title : string;
@@ -12,10 +12,11 @@ type metadata = {
   rating : int option;
   featured : bool;
 }
-[@@deriving yaml]
+[@@deriving of_yaml]
 
 type t = {
   title : string;
+  slug : string;
   description : string;
   authors : string list;
   language : string;
@@ -36,6 +37,7 @@ let all () =
       let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
       {
         title = metadata.title;
+        slug = Utils.slugify metadata.title;
         description = metadata.description;
         authors = metadata.authors;
         language = metadata.language;
@@ -75,7 +77,7 @@ let pp ppf v =
   ; body_md = %a
   ; body_html = %a
   }|}
-    Pp.string v.title Pp.string (Utils.slugify v.title) Pp.string v.description
+    Pp.string v.title Pp.string v.slug Pp.string v.description
     (Pp.list Pp.string) v.authors Pp.string v.language Pp.string v.published
     Pp.string v.cover (Pp.option Pp.string) v.isbn (Pp.list pp_link) v.links
     (Pp.option Pp.int) v.rating Pp.bool v.featured Pp.string v.body_md Pp.string

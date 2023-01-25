@@ -1,5 +1,3 @@
-[@@@ocaml.warning "-66"]
-
 type metadata = {
   title : string;
   description : string;
@@ -11,7 +9,7 @@ type metadata = {
   embed : string option;
   year : int;
 }
-[@@deriving yaml]
+[@@deriving of_yaml]
 
 module Kind = struct
   type t = [ `Conference | `Mooc | `Lecture ]
@@ -48,14 +46,8 @@ let decode s =
       Ok
         (List.map
            (fun x ->
-             let (metadata : metadata) =
-               Utils.decode_or_raise metadata_of_yaml x
-             in
-             let kind =
-               match Kind.of_string metadata.kind with
-               | Ok x -> x
-               | Error (`Msg err) -> raise (Exn.Decode_error err)
-             in
+             let metadata = Utils.decode_or_raise metadata_of_yaml x in
+             let kind = Utils.decode_or_raise Kind.of_string metadata.kind in
              ({
                 title = metadata.title;
                 slug = Utils.slugify metadata.title;

@@ -52,6 +52,7 @@ let page_routes =
       Dream.get Url.problems Handler.problems;
       Dream.get (Url.tutorial ":id") Handler.tutorial;
       Dream.get Url.playground Handler.playground;
+      Dream.get Url.installer Handler.installer;
     ]
 
 let package_route t =
@@ -96,6 +97,9 @@ let router t =
       Dream.scope ""
         [ Dream_encoding.compress ]
         [ Dream.get "/media/**" (Dream.static ~loader:media_loader "") ];
+      Dream.scope ""
+        [ Dream_encoding.compress ]
+        [ Dream.get "/play/**" @@ Dream.static "playground/asset/" ];
       Dream.scope ""
         [ Dream_encoding.compress ]
         [ Dream.get "/**" (Dream.static ~loader:asset_loader "") ];

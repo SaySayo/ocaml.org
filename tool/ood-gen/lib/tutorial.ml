@@ -5,7 +5,7 @@ type metadata = {
   date : string;
   category : string;
 }
-[@@deriving yaml]
+[@@deriving of_yaml]
 
 type t = {
   title : string;
@@ -18,12 +18,6 @@ type t = {
   body_md : string;
   body_html : string;
 }
-
-let proficiency_list_of_string_list =
-  List.map (fun x ->
-      match Meta.Proficiency.of_string x with
-      | Ok x -> x
-      | Error (`Msg err) -> raise (Exn.Decode_error err))
 
 (* Copied from ocaml/omd, html.ml *)
 let to_plain_text t =
@@ -54,9 +48,12 @@ let doc_with_ids doc =
             | (_, slug) :: _ -> slug (* Discard extra ids *)
           in
           let link : _ Omd.link =
-            { label = inline; destination = "#" ^ id; title = None }
+            { label = Text (attr, ""); destination = "#" ^ id; title = None }
           in
-          Heading (("id", id) :: attr, level, Link (attr, link))
+          Heading
+            ( ("id", id) :: attr,
+              level,
+              Concat ([], [ Link ([ ("class", "anchor") ], link); inline ]) )
       | el -> el)
     doc
 

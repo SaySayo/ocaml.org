@@ -51,3 +51,12 @@ let tutorial name = "/docs/" ^ name
 let getting_started = tutorial "up-and-running"
 let best_practices = "/docs/best-practices"
 let problems = "/problems"
+let installer = "/install-platform.sh"
+
+let github_installer =
+  "https://github.com/tarides/ocaml-platform-installer/releases/latest/download/installer.sh"
+
+let github_opam_file package_name package_version =
+  Printf.sprintf
+    "https://github.com/ocaml/opam-repository/blob/master/packages/%s/%s.%s/opam"
+    package_name package_name package_version

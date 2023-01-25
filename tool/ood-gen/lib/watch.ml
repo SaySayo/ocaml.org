@@ -1,5 +1,3 @@
-[@@@ocaml.warning "-66"]
-
 type metadata = {
   name : string;
   embed_path : string;
@@ -9,7 +7,7 @@ type metadata = {
   language : string;
   category : string;
 }
-[@@deriving yaml]
+[@@deriving of_yaml]
 
 type t = metadata
 

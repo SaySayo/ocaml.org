@@ -209,23 +209,17 @@ let jobs req =
   in
   Dream.html (Ocamlorg_frontend.jobs ?location ~locations jobs)
 
-let page (page : Ood.Page.t) canonical (_req : Dream.request) =
+let page canonical (_req : Dream.request) =
+  let page = Ood.Page.get canonical in
   Dream.html
     (Ocamlorg_frontend.page ~title:page.title ~description:page.description
        ~meta_title:page.meta_title ~meta_description:page.meta_description
        ~content:page.body_html ~canonical)
 
-let carbon_footprint =
-  page Ood.Page.carbon_footprint Ocamlorg_frontend.Url.carbon_footprint
-
-let privacy_policy =
-  page Ood.Page.privacy_policy Ocamlorg_frontend.Url.privacy_policy
-
-let governance = page Ood.Page.governance Ocamlorg_frontend.Url.governance
-
-let code_of_conduct =
-  page Ood.Page.code_of_conduct Ocamlorg_frontend.Url.code_of_conduct
-
+let carbon_footprint = page Ocamlorg_frontend.Url.carbon_footprint
+let privacy_policy = page Ocamlorg_frontend.Url.privacy_policy
+let governance = page Ocamlorg_frontend.Url.governance
+let code_of_conduct = page Ocamlorg_frontend.Url.code_of_conduct
 let playground _req = Dream.html (Ocamlorg_frontend.playground ())
 
 let papers req =
@@ -392,6 +386,8 @@ let package_docs t req =
       let target = Ocamlorg_frontend.Url.package_doc package version_string ~is_latest_url:false in
       Dream.redirect req target
 
+let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
+
 let package_versioned t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
   let version_from_url = Dream.param req "version"
@@ -436,6 +432,10 @@ let package_versioned t kind req =
         package_info.Ocamlorg_package.Info.dependencies
         |> List.map (fun (name, x) -> (Ocamlorg_package.Name.to_string name, x))
       in
+      let conflicts =
+        package_info.Ocamlorg_package.Info.conflicts
+        |> List.map (fun (name, x) -> (Ocamlorg_package.Name.to_string name, x))
+      in
       let homepages = package_info.Ocamlorg_package.Info.homepage in
       let source =
         Option.map
@@ -450,6 +450,8 @@ let package_versioned t kind req =
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
            ~readme_title ~dependencies ~rev_dependencies ~homepages ~source
            ~changes_filename ~license_filename ~is_latest_url package_meta)
+           ~readme_title ~dependencies ~rev_dependencies ~conflicts ~homepages
+           ~source ~changes_filename ~license_filename package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in

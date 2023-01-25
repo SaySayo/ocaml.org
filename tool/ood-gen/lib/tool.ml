@@ -6,7 +6,7 @@ type metadata = {
   description : string;
   lifecycle : string;
 }
-[@@deriving yaml]
+[@@deriving of_yaml]
 
 module Lifecycle = struct
   type t = [ `Incubate | `Active | `Sustain | `Deprecate ]
@@ -42,13 +42,9 @@ let decode s =
       Ok
         (List.map
            (fun x ->
-             let (metadata : metadata) =
-               Utils.decode_or_raise metadata_of_yaml x
-             in
+             let metadata = Utils.decode_or_raise metadata_of_yaml x in
              let lifecycle =
-               match Lifecycle.of_string metadata.lifecycle with
-               | Ok x -> x
-               | Error (`Msg err) -> raise (Exn.Decode_error err)
+               Utils.decode_or_raise Lifecycle.of_string metadata.lifecycle
              in
              let description =
                Omd.of_string metadata.description |> Omd.to_html
