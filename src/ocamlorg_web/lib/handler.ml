@@ -452,7 +452,7 @@ let package_versioned t kind req =
       in
       Dream.html
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
-           ~readme_title ~dependencies ~rev_dependencies ~conflics ~homepages
+           ~readme_title ~dependencies ~rev_dependencies ~conflicts ~homepages
            ~source ~changes_filename ~license_filename ~is_latest_url
            package_meta)
 
