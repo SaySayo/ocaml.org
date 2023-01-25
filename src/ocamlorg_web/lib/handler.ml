@@ -452,8 +452,9 @@ let package_versioned t kind req =
       in
       Dream.html
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
-           ~readme_title ~dependencies ~rev_dependencies ~homepages ~source
-           ~changes_filename ~license_filename ~is_latest_url package_meta)
+           ~readme_title ~dependencies ~rev_dependencies ~conflics ~homepages
+           ~source ~changes_filename ~license_filename ~is_latest_url
+           package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
