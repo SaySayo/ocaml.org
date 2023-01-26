@@ -367,28 +367,15 @@ let packages_search t req =
 
 let package _t req =
   let package = Dream.param req "name" in
-  let target = Ocamlorg_frontend.Url.package package in
+  let target = Ocamlorg_frontend.Url.package_with_version package "latest" in
   Dream.redirect req target
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
     PACKAGE. *)
-let package_docs t req =
-  let open Lwt.Syntax in
+let package_docs _t req =
   let package = Dream.param req "name" in
-  let name = Ocamlorg_package.Name.of_string package in
-  let* version_opt = Ocamlorg_package.latest_documented_version t name in
-  match version_opt with
-  | None -> not_found req
-  | Some version ->
-      let version_string =
-        if Ocamlorg_package.is_latest_version t name version then "latest"
-        else Ocamlorg_package.Version.to_string version
-      in
-      let target =
-        Ocamlorg_frontend.Url.package_doc package version_string
-          ~is_latest_url:false
-      in
-      Dream.redirect req target
+  let target = Ocamlorg_frontend.Url.package_doc package "latest" in
+  Dream.redirect req target
 
 let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
 
