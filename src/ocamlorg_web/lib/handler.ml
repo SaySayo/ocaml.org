@@ -374,7 +374,7 @@ let package _t req =
     PACKAGE. *)
 let package_docs _t req =
   let package = Dream.param req "name" in
-  let target = Ocamlorg_frontend.Url.package_doc package "latest" in
+  let target = Ocamlorg_frontend.Url.package_doc package in
   Dream.redirect req target
 
 let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
@@ -470,13 +470,12 @@ let package_doc t kind req =
           match kind with
           | `Package ->
               Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
-                ~is_latest_url
           | `Universe u ->
-              Ocamlorg_frontend.Url.package_doc ~hash:u ~page:"" ~is_latest_url
+              Ocamlorg_frontend.Url.package_doc ~hash:u ~page:""
         in
         make
           (Ocamlorg_package.Name.to_string name)
-          (Ocamlorg_package.Version.to_string version)
+          ~version:(Ocamlorg_package.Version.to_string version)
       in
       let* docs = Ocamlorg_package.documentation_page ~kind package path in
       match docs with

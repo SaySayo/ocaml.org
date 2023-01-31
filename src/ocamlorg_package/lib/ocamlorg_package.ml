@@ -389,7 +389,8 @@ let latest_documented_version t name =
 let is_latest_version t name version =
   match get_package_versions t name with
   | None -> false
-  | Some vlist -> List.hd vlist == version
+  | Some (latest :: _) -> latest = version
+  | _ -> assert false
 
 module Search : sig
   type search_request

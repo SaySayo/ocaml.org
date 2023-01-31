@@ -40,7 +40,7 @@ Layout.render
               <% package.versions |> List.iter begin fun item -> %>
               <option value="/p/<%s package.name %>/<%s item %>"<%s if not is_latest_url && item = package.version then "selected" else "" %>>
                 <%s item %>
-              </option>  
+              </option>
               <% end; %>
             </select>
           </h4>

@@ -8,10 +8,10 @@ let package_docs v = "/p/" ^ v ^ "/doc"
 let package_with_version ?hash v version =
   with_hash hash ^ "/" ^ v ^ "/" ^ version
 
-let package_doc ?hash ?(page = "index.html") ?(is_latest_url = false) v version
-    =
-  if is_latest_url then with_hash hash ^ "/" ^ v ^ "/latest/doc/" ^ page
-  else with_hash hash ^ "/" ^ v ^ "/" ^ version ^ "/doc/" ^ page
+let with_version = Option.value ~default:"latest"
+
+let package_doc ?hash ?version ?(page = "index.html") v =
+  with_hash hash ^ "/" ^ v ^ "/" ^ with_version version ^ "/doc/" ^ page
 
 let community = "/community"
 let success_story v = "/success-stories/" ^ v
