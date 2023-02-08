@@ -15,21 +15,26 @@ type t = {
   tags : string list;
   body_html : string;
 }
-[@@deriving
-  stable_record ~version:metadata ~add:[ authors ] ~remove:[ slug; body_html ]]
-
-let decode (fname, content) =
-  let slug = Filename.basename (Filename.remove_extension fname) in
-  let metadata, body = Utils.extract_metadata_body content in
-  let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
-  let body_html =
-    Omd.to_html (Hilite.Md.transform (Omd.of_string (String.trim body)))
-  in
-  of_metadata metadata ~slug ~body_html
+[@@deriving yaml]
 
 let all () =
-  Utils.map_files_with_names decode "news/*/*.md"
-  |> List.sort (fun a b -> String.compare b.date a.date)
+  Utils.map_files_with_names
+    (fun (fname, content) ->
+      let slug = Filename.basename (Filename.remove_extension fname) in
+      let metadata, body = Utils.extract_metadata_body content in
+      let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
+      {
+        title = metadata.title;
+        slug;
+        description = metadata.description;
+        date = metadata.date;
+        tags = metadata.tags;
+        body_html =
+          Omd.to_html (Hilite.Md.transform (Omd.of_string (String.trim body)));
+      })
+    "news/*/*.md"
+  |> List.sort (fun a b -> String.compare a.date b.date)
+  |> List.rev
 
 let pp ppf v =
   Fmt.pf ppf

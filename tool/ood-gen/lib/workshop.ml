@@ -72,8 +72,27 @@ let decode content =
   of_metadata metadata ~toc_html ~body_md ~body_html
 
 let all () =
-  Utils.map_files decode "workshops/*.md"
-  |> List.sort (fun w1 w2 -> String.compare w2.date w1.date)
+  Utils.map_files
+    (fun content ->
+      let metadata, body = Utils.extract_metadata_body content in
+      let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
+      let omd = Omd.of_string body in
+      {
+        title = metadata.title;
+        slug = Utils.slugify metadata.title;
+        location = metadata.location;
+        date = metadata.date;
+        important_dates = metadata.important_dates;
+        presentations = metadata.presentations;
+        program_committee = metadata.program_committee;
+        organising_committee = metadata.organising_committee;
+        toc_html = Omd.to_html (Omd.toc ~depth:4 omd);
+        body_md = body;
+        body_html = Omd.to_html omd;
+      })
+    "workshops/*.md"
+  |> List.sort (fun w1 w2 -> String.compare w1.date w2.date)
+  |> List.rev
 
 let pp_role ppf = function
   | `Chair -> Fmt.string ppf "`Chair"

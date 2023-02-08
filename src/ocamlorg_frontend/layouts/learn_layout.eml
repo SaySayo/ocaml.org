@@ -98,7 +98,11 @@ inner_html
   ~description
   ~canonical
   ?active_top_nav_item @@
+<<<<<<< HEAD
   <div class="bg-white" x-data="{ open: false, sidebar: window.innerWidth > 1024 && true, showOnMobile: false}" @resize.window="sidebar = window.innerWidth > 1024"  x-on:close-sidebar="sidebar=window.innerWidth > 1024 && true">
+=======
+  <div class="bg-white" x-data="{ open: false, sidebar: window.innerWidth > 1024 && true, showOnMobile: false}" @resize.window="sidebar = window.innerWidth > 1024">
+>>>>>>> 8d16e466 (add latest url)
     <div role="button" aria-pressed="false" :aria-pressed="sidebar" class="bg-primary-600  p-3 z-30 rounded-r-xl text-white shadow-md top-2/4 fixed lg:hidden left-0"
       :class="sidebar ? 'pl-1 pr-2': ''" x-on:click="sidebar = ! sidebar">
       <div class="transition-transform h-6 w-6" :class='sidebar ? "" : "rotate-180" '>
@@ -116,18 +120,29 @@ inner_html
           class="p-10 z-20 bg-white flex-col fixed h-screen overflow-auto lg:pr-0 lg:flex left-0 top-0 lg:sticky w-72 lg:p-0 lg:pt-6"
           x-show="sidebar" x-transition:enter="transition duration-200 ease-out"
           x-transition:enter-start="-translate-x-full" x-transition:leave="transition duration-100 ease-in"
+<<<<<<< HEAD
           x-transition:leave-end="-translate-x-full" id="htmx-sidebar">
           <%s! left_sidebar_html %>
         </div>
 
         <div class="flex-1 z-0 z- min-w-0 lg:pt-6 <%s! if right_sidebar_html != None then "lg:max-w-3xl" else "" %>"
              id="htmx-content">
+=======
+          x-transition:leave-end="-translate-x-full">
+          <%s! left_sidebar_html %>
+        </div>
+        <div class="flex-1 z-0 z- min-w-0 lg:pt-6 <%s! if right_sidebar_html != None then "lg:max-w-3xl" else "" %>">
+>>>>>>> 8d16e466 (add latest url)
           <%s! inner_html %>
         </div>
         <% (match right_sidebar_html with
             | Some (html) -> %>
+<<<<<<< HEAD
           <div class="hidden xl:flex top-0 sticky h-screen flex-col w-60 overflow-auto lg:pt-6 right-sidebar"
                id="htmx-right-sidebar">
+=======
+          <div class="hidden xl:flex top-0 sticky h-screen flex-col w-60 overflow-auto lg:pt-6 right-sidebar">
+>>>>>>> 8d16e466 (add latest url)
             <%s! html %>
           </div>
         <% | None -> () ); %>

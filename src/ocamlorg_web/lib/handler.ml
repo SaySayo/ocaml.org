@@ -365,47 +365,37 @@ let packages_search t req =
       Dream.html (Ocamlorg_frontend.packages_search ~total ~search results)
   | None -> Dream.redirect req Ocamlorg_frontend.Url.packages
 
-let package t req =
+let package _t req =
   let package = Dream.param req "name" in
-  let find_default_version name =
-    Ocamlorg_package.get_package_latest t name
-    |> Option.map (fun pkg -> Ocamlorg_package.version pkg)
-  in
-  let name = Ocamlorg_package.Name.of_string package in
-  let version = find_default_version name in
-  match version with
-  | Some version ->
-      let version = Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_with_version package version in
-      Dream.redirect req target
-  | None -> not_found req
+  let target = Ocamlorg_frontend.Url.package_with_version package in
+  Dream.redirect req target
 
 (** Redirect any URL with suffix /p/PACKAGE/docs to the latest documentation for
     PACKAGE. *)
-let package_docs t req =
-  let open Lwt.Syntax in
+let package_docs _t req =
   let package = Dream.param req "name" in
-  let name = Ocamlorg_package.Name.of_string package in
-  let* version_opt = Ocamlorg_package.latest_documented_version t name in
-  match version_opt with
-  | None -> not_found req
-  | Some version ->
-      let version = Ocamlorg_package.Version.to_string version in
-      let target = Ocamlorg_frontend.Url.package_doc package version in
-      Dream.redirect req target
+  let target = Ocamlorg_frontend.Url.package_doc package in
+  Dream.redirect req target
+
+let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
 
 let installer req = Dream.redirect req Ocamlorg_frontend.Url.github_installer
 
 let package_versioned t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
-  let version =
-    Ocamlorg_package.Version.of_string @@ Dream.param req "version"
+  let version_from_url = Dream.param req "version" in
+  let package =
+    if version_from_url = "latest" then
+      Ocamlorg_package.get_package_latest t name
+    else
+      let version = Ocamlorg_package.Version.of_string @@ version_from_url in
+      Ocamlorg_package.get_package t name version
   in
-  let package = Ocamlorg_package.get_package t name version in
   match package with
   | None -> not_found req
   | Some package ->
       let open Lwt.Syntax in
+      let is_latest_url = version_from_url = "latest" in
       let kind =
         match kind with
         | Package -> `Package
@@ -452,18 +442,25 @@ let package_versioned t kind req =
       Dream.html
         (Ocamlorg_frontend.package_overview ~documentation_status ~readme
            ~readme_title ~dependencies ~rev_dependencies ~conflicts ~homepages
-           ~source ~changes_filename ~license_filename package_meta)
+           ~source ~changes_filename ~license_filename ~is_latest_url
+           package_meta)
 
 let package_doc t kind req =
   let name = Ocamlorg_package.Name.of_string @@ Dream.param req "name" in
-  let version =
-    Ocamlorg_package.Version.of_string @@ Dream.param req "version"
+  let version_from_url = Dream.param req "version" in
+  let package =
+    if version_from_url = "latest" then
+      Ocamlorg_package.get_package_latest t name
+    else
+      let version = Ocamlorg_package.Version.of_string @@ version_from_url in
+      Ocamlorg_package.get_package t name version
   in
-  let package = Ocamlorg_package.get_package t name version in
   match package with
   | None -> not_found req
   | Some package -> (
       let open Lwt.Syntax in
+      let is_latest_url = version_from_url = "latest" in
+      let version = Ocamlorg_package.version package in
       let kind =
         match kind with
         | Package -> `Package
@@ -473,12 +470,14 @@ let package_doc t kind req =
       let root =
         let make =
           match kind with
-          | `Package -> Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
-          | `Universe u -> Ocamlorg_frontend.Url.package_doc ~hash:u ~page:""
+          | `Package ->
+              Ocamlorg_frontend.Url.package_doc ?hash:None ~page:""
+          | `Universe u ->
+              Ocamlorg_frontend.Url.package_doc ~hash:u ~page:""
         in
         make
           (Ocamlorg_package.Name.to_string name)
-          (Ocamlorg_package.Version.to_string version)
+          ~version:(Ocamlorg_package.Version.to_string version)
       in
       let* docs = Ocamlorg_package.documentation_page ~kind package path in
       match docs with
@@ -612,4 +611,4 @@ let package_doc t kind req =
           let package_meta = package_meta t package in
           Dream.html
             (Ocamlorg_frontend.package_documentation ~path ~title ~toc ~maptoc
-               ~content:doc.content package_meta))
+               ~is_latest_url ~content:doc.content package_meta))

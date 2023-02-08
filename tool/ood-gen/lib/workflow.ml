@@ -1,5 +1,4 @@
-type metadata = { title : string } [@@deriving of_yaml]
-
+type metadata = { title : string } [@@deriving yaml]
 type t = { title : string; body_md : string; body_html : string }
 [@@deriving stable_record ~version:metadata ~remove:[ body_md; body_html ]]
 

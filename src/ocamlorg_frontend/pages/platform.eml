@@ -174,3 +174,16 @@ Learn_layout.render
       </div>
     </div>
   </div>
+</div>
+<script>
+  function videoFullWidth() {
+    return {
+      isPlaying: false,
+      embed_url: "https://watch.ocaml.org/videos/embed/0e2070fd-798b-47f7-8e69-ef75e967e516",
+      iframe_param: "?autoplay=1&mute=1",
+      iframe_url() {
+        return this.embed_url + this.iframe_param;
+      },
+    };
+  }
+</script>

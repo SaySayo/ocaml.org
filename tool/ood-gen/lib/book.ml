@@ -14,34 +14,37 @@ type metadata = {
 }
 [@@deriving of_yaml]
 
-type t = {
-  title : string;
-  slug : string;
-  description : string;
-  authors : string list;
-  language : string;
-  published : string;
-  cover : string;
-  isbn : string option;
-  links : link list;
-  rating : int option;
-  featured : bool;
-  body_md : string;
-  body_html : string;
-}
-[@@deriving
-  stable_record ~version:metadata ~remove:[ slug; body_md; body_html ]]
+let path = Fpath.v "data/books/"
 
-let of_metadata m = of_metadata m ~slug:(Utils.slugify m.title)
+let parse content =
+  let metadata, _ = Utils.extract_metadata_body content in
+  metadata_of_yaml metadata
 
-let decode content =
-  let metadata, body = Utils.extract_metadata_body content in
-  let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
-  let body_md = String.trim body in
-  let body_html = Omd.of_string body |> Omd.to_html in
-  of_metadata metadata ~body_md ~body_html
+type t = { meta : metadata; body_md : string; body_html : string }
 
-let all () = Utils.map_files decode "books/"
+let all () =
+  Utils.map_files
+    (fun content ->
+      let metadata, body = Utils.extract_metadata_body content in
+      let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
+      {
+        meta =
+          {
+            title = metadata.title;
+            description = metadata.description;
+            authors = metadata.authors;
+            language = metadata.language;
+            published = metadata.published;
+            cover = metadata.cover;
+            isbn = metadata.isbn;
+            links = metadata.links;
+            rating = metadata.rating;
+            featured = metadata.featured;
+          };
+        body_md = String.trim body;
+        body_html = Omd.of_string body |> Omd.to_html;
+      })
+    "books/"
 
 let pp_link ppf (v : link) =
   Fmt.pf ppf

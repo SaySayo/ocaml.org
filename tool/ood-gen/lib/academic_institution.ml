@@ -30,18 +30,24 @@ type t = {
   body_md : string;
   body_html : string;
 }
-[@@deriving
-  stable_record ~version:metadata ~remove:[ body_md; body_html; slug ]]
 
-let of_metadata m = of_metadata m ~slug:(Utils.slugify m.name)
-
-let decode content =
-  let metadata, body_md = Utils.extract_metadata_body content in
-  let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
-  let body_html = Omd.of_string body_md |> Omd.to_html in
-  of_metadata metadata ~body_md ~body_html
-
-let all () = Utils.map_files decode "academic_institutions"
+let all () =
+  Utils.map_files
+    (fun content ->
+      let metadata, body = Utils.extract_metadata_body content in
+      let metadata = Utils.decode_or_raise metadata_of_yaml metadata in
+      {
+        name = metadata.name;
+        description = metadata.description;
+        url = metadata.url;
+        logo = metadata.logo;
+        continent = metadata.continent;
+        courses = metadata.courses;
+        location = metadata.location;
+        body_md = body;
+        body_html = Omd.of_string body |> Omd.to_html;
+      })
+    "academic_institutions"
 
 let pp_course ppf (v : course) =
   Fmt.pf ppf {|

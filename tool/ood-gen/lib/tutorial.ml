@@ -22,9 +22,12 @@ type t = {
   stable_record ~version:metadata ~add:[ id ]
     ~remove:[ slug; fpath; toc_html; body_md; body_html ]]
 
-let of_metadata m = of_metadata m ~slug:m.id
+let proficiency_list_of_string_list =
+  List.map (fun x ->
+      match Meta.Proficiency.of_string x with
+      | Ok x -> x
+      | Error (`Msg err) -> raise (Exn.Decode_error err))
 
-(* Copied from ocaml/omd, html.ml *)
 let to_plain_text t =
   let buf = Buffer.create 1024 in
   let rec go : _ Omd.inline -> unit = function
@@ -46,19 +49,12 @@ let doc_with_ids doc =
   List.map
     (function
       | Heading (attr, level, inline) ->
-          let id, attr = List.partition (fun (key, _) -> key = "id") attr in
-          let id =
-            match id with
-            | [] -> Utils.slugify (to_plain_text inline)
-            | (_, slug) :: _ -> slug (* Discard extra ids *)
+          let attr =
+            match List.assoc_opt "id" attr with
+            | Some _ -> attr
+            | None -> ("id", Utils.slugify (to_plain_text inline)) :: attr
           in
-          let link : _ Omd.link =
-            { label = Text (attr, ""); destination = "#" ^ id; title = None }
-          in
-          Heading
-            ( ("id", id) :: attr,
-              level,
-              Concat ([], [ Link ([ ("class", "anchor") ], link); inline ]) )
+          Heading (attr, level, inline)
       | el -> el)
     doc
 

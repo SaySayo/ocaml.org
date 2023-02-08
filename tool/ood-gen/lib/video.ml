@@ -40,9 +40,12 @@ type t = {
 }
 [@@deriving stable_record ~version:metadata ~modify:[ kind ] ~remove:[ slug ]]
 
-let of_metadata m =
-  of_metadata m ~slug:(Utils.slugify m.title)
-    ~modify_kind:(Utils.decode_or_raise Kind.of_string)
+let parse s =
+  let yaml = Utils.decode_or_raise Yaml.of_string s in
+  match yaml with
+  | `O [ ("videos", `A xs) ] ->
+      Ok (List.map (fun x -> Utils.decode_or_raise metadata_of_yaml x) xs)
+  | _ -> Error (`Msg "")
 
 let decode s =
   let yaml = Utils.decode_or_raise Yaml.of_string s in
@@ -51,8 +54,27 @@ let decode s =
       Ok
         (List.map
            (fun x ->
-             let metadata = Utils.decode_or_raise metadata_of_yaml x in
-             of_metadata metadata)
+             let (metadata : metadata) =
+               Utils.decode_or_raise metadata_of_yaml x
+             in
+             let kind =
+               match Kind.of_string metadata.kind with
+               | Ok x -> x
+               | Error (`Msg err) -> raise (Exn.Decode_error err)
+             in
+             ({
+                title = metadata.title;
+                slug = Utils.slugify metadata.title;
+                description = metadata.description;
+                people = metadata.people;
+                kind;
+                tags = metadata.tags;
+                paper = metadata.paper;
+                link = metadata.link;
+                embed = metadata.embed;
+                year = metadata.year;
+              }
+               : t))
            xs)
   | _ -> Error (`Msg "expected a list of videos")
 

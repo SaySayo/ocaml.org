@@ -1,13 +1,4 @@
-let render
-?(show_get_started=true)
-?(use_swiper=false)
-?(banner = false)
-?description
-?styles
-~title
-?canonical
-?(active_top_nav_item: Header.active_nav_item option)
-inner =
+let render ?(use_swiper=false) ?(banner = false) ?(wide=false) ?description ?styles ~title ?canonical inner =
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -40,7 +31,6 @@ inner =
     <% ); %>
     <link rel="stylesheet" href="/vendors/font-files/inter.css">
     <script defer src="/vendors/alpine.min.js"></script>
-    <script defer src="/vendors/htmx.min.js"></script>
     <% if use_swiper then ( %>
     <link rel="stylesheet" href="/vendors/swiper-bundle.min.css">
     <link rel="alternate" type="application/rss+xml" title="OCaml RSS Feed" href="/feed.xml">
@@ -69,7 +59,7 @@ inner =
     </div>
     <% ); %>
     
-    <%s! Header.render ~show_get_started ?active_top_nav_item () %>
+    <%s! Header.render ~wide () %>
 
     <main><%s! inner %></main>
 
