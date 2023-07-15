@@ -69,3 +69,34 @@ latest_version
     <%s! install_card latest_version %>
     <%s! standard_lib_card %>
   </div>
+
+let book_tile 
+books
+= 
+  <div class="flex flex-row gap-x-6 md:pr-20">
+    <% books |> List.rev |> List.iteri (fun index (item : Data.Book.t) -> if (index < 2) then ( %>  
+        <div class="flex flex-col">
+            <img src="<%s Ocamlorg_static.Media.url item.cover %>" 
+                    class="mt-2 h-48 w-32 md:w-56 md:h-80 border border-gray-200"
+                    alt="">
+            <h4 class="h-16 w-56 mt-2 text-gray-700 text-lg font-normal leading-6"> <%s item.title %> </h4>
+            <div class="inline-block w-20 mt-4 text-center border-green-700 border-2 bg-default text-green-700 font-medium rounded-full text-xs">
+                Beginner
+            </div>
+        </div>
+      <% ) else %> 
+    <% ); %>
+  </div>
+
+
+
+let books_content_block 
+~title
+~heading
+books
+= 
+  <div class="w-full h-[38rem] bg-default md:w-1/2">
+    <div class="mt-4 text-default text-sm text-left font-medium leading-7 tracking-widest"> <%s title %> </div>
+    <h2 class="mt-2 text-default text-2xl text-left font-normal leading-7"> <%s heading %> </h2>
+    <%s! book_tile books %>
+  </div>

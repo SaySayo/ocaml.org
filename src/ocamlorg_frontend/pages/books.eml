@@ -74,3 +74,6 @@ Learn_layout.render
         </div>
     </div>
 </div>
+<div>
+<%s! Learn_books.books_content_block ~title:"Books" ~heading:"Recommended Books" Data.Book.featured %>
+</div>
