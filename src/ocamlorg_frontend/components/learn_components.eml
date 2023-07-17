@@ -88,8 +88,6 @@ books
     <% ); %>
   </div>
 
-
-
 let books_content_block 
 ~title
 ~heading
