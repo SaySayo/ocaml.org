@@ -192,8 +192,8 @@ let proficiency_to_string_option = function
 let exercise_card 
   (exercise : Data.Exercise.t) = 
   let difficulty = proficiency_to_string_option exercise.difficulty in
-  <div class="flex-1 <%s if difficulty = Some "beginner" then "bg-[#e7f1f2]" else if difficulty = Some "intermediate" then  "bg-[#D3D5F9]" else "bg-[#F7D9CC]" %> px-10 py-5 flex flex-col items-start">
-      <h4 class="text-black text-md font-bold"> <%s exercise.title %> </h4>
+  <div class="flex-1 h-full <%s if difficulty = Some "beginner" then "bg-[#e7f1f2]" else if difficulty = Some "intermediate" then  "bg-[#D3D5F9]" else "bg-[#F7D9CC]" %> pl-4 py-3 flex flex-col space-y-2 items-start">
+      <h4 class="text-black my-1 text-md font-bold"> <%s exercise.title %> </h4>
       <div class="text-black opacity-2 text-sm py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
         <%s exercise.statement %> </div>
       <div>
