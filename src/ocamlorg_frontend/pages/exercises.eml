@@ -74,16 +74,16 @@ Learn_layout.render
     </div>
     <div class="mt-10">
       <p class="font-normal prose mb-1">Select popular exercises for </p>
-      <div id="difficulty-list" class="border-b border-solid border-zinc-300 leading-5 text-zinc-800 max-w-sm sm:max-w-none">
+      <div id="difficulty-list" class="border-b border-solid border-zinc-300 leading-5 text-zinc-800">
         <ul class="flex flex-col list-none sm:flex-row sm:pl-0">
           <li class="w-full my-0 rounded-l-md  text-center border border-gray-300 px-4 py-2">
-            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=beginner" onclick="toggleSelected(this, 'bg-teal-700')"> Beginner</a></li>
+            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=beginner" onclick="toggleSelected(this, 'bg-teal-700', 'beginner')"> Beginner</a></li>
           <li class="w-full my-0 border border-gray-300 text-center px-4 py-2">
-            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=intermediate" onclick="toggleSelected(this, 'bg-[#040113]')"> Intermediate </a> </li>
+            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=intermediate" onclick="toggleSelected(this, 'bg-[#040113]', 'intermediate')"> Intermediate </a> </li>
           <li class="w-full my-0 border text-center border-gray-300 px-4 py-2">
-            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=advanced" onclick="toggleSelected(this, 'bg-primary-700')"> Advanced </a> </li>
+            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=advanced" onclick="toggleSelected(this, 'bg-primary-700', 'advanced')"> Advanced </a> </li>
           <li class="w-full rounded-r-md text-center my-0 border border-gray-300 px-4 py-2">
-            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=all" onclick="toggleSelected(this, 'bg-[#0E2A49]')"> Mixed Level </a> </li>
+            <a class="appearance-none text-gray-300" href="/exercises?difficulty_level=all" onclick="toggleSelected(this, 'bg-[#0E2A49]', 'all')"> Mixed Level </a> </li>
         </ul>
         <form action="<%s Url.exercises %>" method="GET">
           <label for="difficulty_level" class="sr-only">Difficulty</label>
@@ -95,17 +95,23 @@ Learn_layout.render
         </form>
       </div>
     </div>
-    
-    <% exercises |> List.iter (fun (exercise : Data.Exercise.t) -> %>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-      <div x-data="{statement: true}" id="<%s" exercise.number %>
-        >
-        <%s! Learn_components.exercise_card exercise %>
-      </div>
-    <% ); %>
-    
-  </div>
+    <div class="grid grid-cols-1 gap-4 grid-flow-row auto-rows-auto sm:grid-cols-2 md:grid-cols-3">
+      <% exercises |> List.iter (fun (exercise : Data.Exercise.t) -> %>
+          <div x-data="{statement: true}" id="<%s exercise.number %>">
+            <%s! Learn_components.exercise_card exercise %>
+          </div>
+      <% ); %>
+    </div>
   <script>
+    const difficultyLevel = localStorage.getItem('selectedDifficultyLevel');
+    
+    if (difficultyLevel) {
+      const item = document.querySelector(`#difficulty-list a[href$=${difficultyLevel}]`);
+      if (item) {
+        toggleSelected(item, `bg-${difficultyLevel}`);
+      }
+    }
+    
     function toggleSelected(item, backgroundColorClass, difficultyLevel) {
       const listItems = document.querySelectorAll('#difficulty-list .flex li');
       listItems.forEach(li => li.classList.remove('bg-teal-700', 'bg-[#040113]', 'bg-primary-700', 'bg-[#0E2A49]'));
@@ -116,7 +122,8 @@ Learn_layout.render
       listLinks.forEach(a => a.classList.remove('text-white'));
 
       item.classList.add('text-white');
-
       
+      // Store the selected difficulty level in local storage
+      localStorage.setItem('selectedDifficultyLevel', difficultyLevel);
     }
   </script>

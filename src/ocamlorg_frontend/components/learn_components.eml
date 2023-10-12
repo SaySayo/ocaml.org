@@ -191,15 +191,12 @@ let proficiency_to_string_option = function
 
 let exercise_card 
   (exercise : Data.Exercise.t) = 
-  <div class="bg-[#e7f1f2] px-10 py-5 flex flex-col items-start w-[30%]">
+  let difficulty = proficiency_to_string_option exercise.difficulty in
+  <div class="flex-1 <%s if difficulty = Some "beginner" then "bg-[#e7f1f2]" else if difficulty = Some "intermediate" then  "bg-[#D3D5F9]" else "bg-[#F7D9CC]" %> px-10 py-5 flex flex-col items-start">
       <h4 class="text-black text-md font-bold"> <%s exercise.title %> </h4>
-      <p
-        class="text-[#414a51] text-sm font-[400] py-[.5rem] whitespace-nowrap overflow-hidden text-ellipsis max-w-[100%]"
-      >
-        <%s exercise.statement %>
-      </p>
-      <% let difficulty = proficiency_to_string_option exercise.difficulty in %>
-        <div>
-          <%s! skill_tag difficulty "" %>
-        </div>
+      <div class="text-black opacity-2 text-sm py-2 whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
+        <%s exercise.statement %> </div>
+      <div>
+        <%s! skill_tag difficulty "w-28" %>
+      </div>
   </div>
