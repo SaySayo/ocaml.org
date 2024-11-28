@@ -2,7 +2,7 @@
 name: University of Rennes 1 
 description: >
  The University of Rennes 1 is a public university located in the city of Rennes, France. It is under the Academy of Rennes. 
-url: "https://www.univ-rennes.fr/"
+url: "https://www.univ-rennes.fr/ - [1 Client error: Timeout was reached]"
 logo: academic_institution/reness.png
 continent: Europe
 courses:
